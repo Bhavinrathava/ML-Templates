@@ -123,15 +123,15 @@ class TestMLflowManager(unittest.TestCase):
         self.manager.log_metrics(metrics)
         self.manager.end_run()
 
-    def test_list_registered_models(self):
+    @patch("mlflow.tracking.MlflowClient.search_registered_models")
+    def test_list_registered_models(self, mock_search_models):
         """Test listing registered models."""
-        # This should not raise an exception
-        try:
-            models = self.manager.list_registered_models()
-            self.assertIsInstance(models, list)
-        except (RuntimeError, Exception):
-            # Expected if no model registry is set up or connection fails
-            self.skipTest("Model registry not available")
+        # Mock the registry call to avoid hanging on unavailable registry
+        mock_search_models.return_value = []
+
+        models = self.manager.list_registered_models()
+        self.assertIsInstance(models, list)
+        mock_search_models.assert_called_once()
 
     def test_save_model_pickle(self):
         """Test pickle model saving utility."""
