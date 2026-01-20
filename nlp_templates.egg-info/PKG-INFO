@@ -1,10 +1,10 @@
 Metadata-Version: 2.4
 Name: nlp-templates
-Version: 0.1.0
+Version: 0.2.0
 Summary: Production-ready ML classification templates with hierarchical and neural network classifiers
 Author-email: Bhavinkumar Rathava <bhavinr9@gmail.com>
 Maintainer-email: Bhavinkumar Rathava <bhavinr9@gmail.com>
-License: MIT
+License-Expression: MIT
 Project-URL: Homepage, https://github.com/bhavinr9/nlp-templates
 Project-URL: Documentation, https://github.com/bhavinr9/nlp-templates#readme
 Project-URL: Repository, https://github.com/bhavinr9/nlp-templates.git
@@ -14,7 +14,6 @@ Keywords: machine-learning,nlp,classification,hierarchical-classification,neural
 Classifier: Development Status :: 4 - Beta
 Classifier: Intended Audience :: Developers
 Classifier: Intended Audience :: Science/Research
-Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.9
@@ -36,6 +35,8 @@ Requires-Dist: matplotlib>=3.5.0
 Requires-Dist: seaborn>=0.11.0
 Provides-Extra: torch
 Requires-Dist: torch>=2.0.0; extra == "torch"
+Provides-Extra: embeddings
+Requires-Dist: sentence-transformers>=2.2.0; extra == "embeddings"
 Provides-Extra: mlflow
 Requires-Dist: mlflow>=2.0.0; extra == "mlflow"
 Provides-Extra: tuning
@@ -53,7 +54,7 @@ Requires-Dist: sphinx>=4.0; extra == "docs"
 Requires-Dist: sphinx-rtd-theme>=1.0; extra == "docs"
 Requires-Dist: myst-parser>=0.18; extra == "docs"
 Provides-Extra: all
-Requires-Dist: nlp-templates[mlflow,torch,tuning]; extra == "all"
+Requires-Dist: nlp-templates[embeddings,mlflow,torch,tuning]; extra == "all"
 Dynamic: license-file
 
 # NLP Templates
@@ -62,12 +63,14 @@ Dynamic: license-file
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Production-ready ML classification templates with hierarchical and neural network classifiers.
+Production-ready ML classification templates with text classification, hierarchical classification, and neural network support.
 
 ## Features
 
-- **SimpleMulticlassClassifier**: Flat multi-class classification with multiple backend support (logistic regression, random forest, SVM, neural network)
-- **HierarchicalNNClassifier**: Multi-level hierarchical classification with neural networks
+- **TextClassifier**: End-to-end text classification (Text -> Embeddings -> Labels)
+- **HierarchicalTextClassifier**: Multi-level hierarchical text classification
+- **SimpleMulticlassClassifier**: Feature-based multi-class classification with multiple backends (logistic regression, random forest, SVM, neural network)
+- **HierarchicalNNClassifier**: Feature-based hierarchical classification with neural networks
 - **MLflow Integration**: Built-in experiment tracking and model logging
 - **Configurable**: YAML/JSON configuration support for hyperparameters
 - **Evaluation Tools**: Metrics calculation, confusion matrices, and visualizations
@@ -78,6 +81,12 @@ Production-ready ML classification templates with hierarchical and neural networ
 
 ```bash
 pip install nlp-templates
+```
+
+### With Text Classification Support (embeddings)
+
+```bash
+pip install nlp-templates[embeddings]
 ```
 
 ### With PyTorch Support (for neural network classifiers)
@@ -100,7 +109,63 @@ pip install nlp-templates[all]
 
 ## Quick Start
 
-### Simple Multi-class Classification
+### Text Classification (Recommended for NLP)
+
+The easiest way to classify text - handles embedding generation automatically:
+
+```python
+from nlp_templates import TextClassifier
+
+# Training data
+texts = [
+    "This product is amazing!", "Excellent quality!",
+    "Terrible, waste of money.", "Very disappointed."
+]
+labels = [1, 1, 0, 0]  # 1=positive, 0=negative
+
+# Initialize and train
+clf = TextClassifier(
+    embedding_model="sentence-transformers/all-MiniLM-L6-v2"
+)
+clf.fit(texts, labels)
+
+# Predict
+new_texts = ["Best purchase ever!", "Broke after one day."]
+predictions = clf.predict(new_texts)
+print(predictions)  # [1, 0]
+```
+
+### Hierarchical Text Classification
+
+For multi-level category prediction:
+
+```python
+from nlp_templates import HierarchicalTextClassifier
+import numpy as np
+
+texts = [
+    "iPhone with great camera", "Android phone 5G",
+    "Gaming laptop RTX", "Business ultrabook",
+    "Cotton t-shirt summer", "Formal dress shirt",
+]
+
+# Hierarchical labels: [Category, Subcategory]
+# Category: 0=Electronics, 1=Clothing
+# Subcategory: 0=Phones, 1=Laptops (for Electronics), 0=Shirts (for Clothing)
+labels = np.array([
+    [0, 0], [0, 0],  # Electronics - Phones
+    [0, 1], [0, 1],  # Electronics - Laptops
+    [1, 0], [1, 0],  # Clothing - Shirts
+])
+
+clf = HierarchicalTextClassifier()
+clf.fit(texts, labels)
+
+predictions = clf.predict(["New smartphone release"])
+print(predictions)  # [[0, 0]] -> Electronics, Phones
+```
+
+### Feature-based Classification
 
 ```python
 import numpy as np
@@ -215,7 +280,32 @@ For `SimpleMulticlassClassifier`:
 
 ## API Reference
 
-### SimpleMulticlassClassifier
+### TextClassifier (Text -> Embeddings -> Labels)
+
+```python
+TextClassifier(
+    embedding_model="sentence-transformers/all-MiniLM-L6-v2",
+    classifier_type="simple",   # "simple" or "hierarchical"
+    name="text_classifier",
+    random_state=42,
+    test_size=0.2,
+    batch_size=32,              # Batch size for embedding generation
+    device=None,                # "cuda", "cpu", or None for auto
+)
+```
+
+**Methods:**
+- `fit(texts, labels)`: Train classifier on text data
+- `predict(texts)`: Predict labels for texts
+- `predict_proba(texts)`: Get prediction probabilities
+- `evaluate()`: Evaluate on test set
+- `get_embeddings(texts)`: Get embeddings without classification
+
+### HierarchicalTextClassifier
+
+Same as `TextClassifier` but defaults to hierarchical classification. Accepts labels of shape `(n_samples, n_hierarchy_levels)`.
+
+### SimpleMulticlassClassifier (Feature-based)
 
 ```python
 SimpleMulticlassClassifier(
@@ -237,7 +327,7 @@ SimpleMulticlassClassifier(
 - `predict_proba(X)`: Get prediction probabilities
 - `full_pipeline(X, y, ...)`: Run complete pipeline
 
-### HierarchicalNNClassifier
+### HierarchicalNNClassifier (Feature-based)
 
 ```python
 HierarchicalNNClassifier(
@@ -271,6 +361,7 @@ HierarchicalNNClassifier(
 - seaborn >= 0.11.0
 
 **Optional dependencies:**
+- sentence-transformers >= 2.2.0 (for text classification with embeddings)
 - torch >= 2.0.0 (for neural network classifiers)
 - mlflow >= 2.0.0 (for experiment tracking)
 - optuna >= 3.0.0 (for hyperparameter tuning)

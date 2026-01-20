@@ -6,7 +6,7 @@ matplotlib>=3.5.0
 seaborn>=0.11.0
 
 [all]
-nlp-templates[mlflow,torch,tuning]
+nlp-templates[embeddings,mlflow,torch,tuning]
 
 [dev]
 pytest>=7.0
@@ -21,6 +21,9 @@ pre-commit>=3.0
 sphinx>=4.0
 sphinx-rtd-theme>=1.0
 myst-parser>=0.18
+
+[embeddings]
+sentence-transformers>=2.2.0
 
 [mlflow]
 mlflow>=2.0.0

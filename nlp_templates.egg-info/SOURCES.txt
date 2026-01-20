@@ -15,6 +15,7 @@ nlp_templates/classifiers/__init__.py
 nlp_templates/classifiers/hierarchical_multiclass_classifier.py
 nlp_templates/classifiers/hierarchical_nn_classifier.py
 nlp_templates/classifiers/simple_multiclass_classifier.py
+nlp_templates/classifiers/text_classifier.py
 nlp_templates/evaluation/__init__.py
 nlp_templates/evaluation/metrics.py
 nlp_templates/evaluation/visualizations.py
