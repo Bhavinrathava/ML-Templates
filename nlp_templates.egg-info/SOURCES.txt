@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+nlp_templates/__init__.py
+nlp_templates.egg-info/PKG-INFO
+nlp_templates.egg-info/SOURCES.txt
+nlp_templates.egg-info/dependency_links.txt
+nlp_templates.egg-info/requires.txt
+nlp_templates.egg-info/top_level.txt
