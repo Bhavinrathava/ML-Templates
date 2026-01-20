@@ -1,0 +1,9 @@
+include LICENSE
+include README.md
+include pyproject.toml
+recursive-include nlp_templates *.py *.typed
+recursive-exclude tests *
+recursive-exclude examples *
+recursive-exclude docs *
+global-exclude __pycache__
+global-exclude *.py[cod]

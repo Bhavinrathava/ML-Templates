@@ -196,3 +196,10 @@ htmlcov/
 # Environment files
 .env.local
 .env.*.local
+
+# PyPI upload
+.pypirc
+twine/
+
+# Output directories
+outputs/

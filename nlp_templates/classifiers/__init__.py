@@ -6,5 +6,14 @@ from nlp_templates.classifiers.simple_multiclass_classifier import (
 from nlp_templates.classifiers.hierarchical_multiclass_classifier import (
     HierarchicalNNClassifier,
 )
+from nlp_templates.classifiers.text_classifier import (
+    TextClassifier,
+    HierarchicalTextClassifier,
+)
 
-__all__ = ["SimpleMulticlassClassifier", "HierarchicalNNClassifier"]
+__all__ = [
+    "SimpleMulticlassClassifier",
+    "HierarchicalNNClassifier",
+    "TextClassifier",
+    "HierarchicalTextClassifier",
+]
