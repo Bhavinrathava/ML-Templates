@@ -1,0 +1,131 @@
+# Example configuration file for SimpleMulticlassClassifier.
+#
+# This file demonstrates how to configure the classifier for training.
+# Save as config.yaml or config.json and pass to the classifier.
+
+# Data configuration
+data:
+  # Path to training data file (CSV, JSON, etc)
+  # Optional - can also load data programmatically
+  path: null
+  
+  # Label column name if labels are in same dataframe
+  label_column: "label"
+  
+  # Test set fraction (0.0 to 1.0)
+  test_size: 0.3
+
+# Model configuration
+model:
+  # Model type: logistic_regression, random_forest, naive_bayes, svm, neural_network
+  type: "logistic_regression"
+  
+  # Model hyperparameters (varies by model type)
+  params:
+    # Logistic Regression
+    max_iter: 1000
+    solver: "lbfgs"
+    
+    # Random Forest
+    # n_estimators: 100
+    # max_depth: 10
+    # min_samples_split: 5
+
+# Alternative model configurations (commented out examples)
+# model:
+#   type: "random_forest"
+#   params:
+#     n_estimators: 100
+#     max_depth: 15
+#     min_samples_split: 5
+#
+# model:
+#   type: "svm"
+#   params:
+#     kernel: "rbf"
+#     C: 1.0
+#
+# model:
+#   type: "neural_network"
+#   params:
+#     hidden_layer_sizes: (100, 50)
+#     activation: "relu"
+#     max_iter: 500
+#     learning_rate_init: 0.001
+#
+# model:
+#   type: "naive_bayes"
+#   params:
+#     alpha: 1.0
+#
+# model:
+#   type: "neural_network"
+#   params:
+#     hidden_dims: [128, 64, 32]
+#     activation: "relu"
+#     dropout_rate: 0.2
+#     learning_rate: 0.001
+#     epochs: 100
+#     batch_size: 32
+
+# Training configuration
+training:
+  # Random state for reproducibility
+  random_state: 42
+  
+  # Number of epochs or iterations (if applicable)
+  epochs: 1
+  
+  # Batch size for training
+  batch_size: 32
+
+# MLflow configuration (for experiment tracking and model registry)
+mlflow:
+  # MLflow tracking server URI (local or remote)
+  # Local: "file:./mlruns" or "sqlite:///mlflow.db"
+  # Remote: "http://localhost:5000"
+  tracking_uri: "file:./mlruns"
+  
+  # Model registry URI (optional, defaults to tracking_uri)
+  registry_uri: null
+  
+  # Experiment name
+  experiment_name: "simple_multiclass_experiment"
+  
+  # Whether to log artifacts (visualizations)
+  log_artifacts: true
+  
+  # Output directory for visualizations
+  output_dir: "outputs"
+
+# Evaluation configuration
+evaluation:
+  # Metrics to calculate
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+  
+  # Average method for multi-class metrics
+  average: "weighted"  # weighted, macro, micro
+  
+  # Save confusion matrix visualization
+  save_confusion_matrix: true
+  
+  # Save metrics comparison chart
+  save_metrics_chart: true
+
+# Logging configuration (optional)
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+  
+  # Log file path (optional)
+  log_file: "logs/classifier.log"
+  
+  # Whether to output to console
+  console_output: true
+  
+  # Whether to use colored output
+  colored_output: true

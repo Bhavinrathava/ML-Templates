@@ -1,14 +1,17 @@
+"""
+Abstract base class for all classification templates.
+"""
+
 from abc import ABC, abstractmethod
+from typing import Optional
+import pandas as pd
 
 
 class BaseClassifier(ABC):
     """
     Abstract base class for all classification templates.
 
-    Responsibilities:
-    1. Define the interface (abstract methods) that subclasses MUST implement
-    2. Provide common functionality shared across all classifiers
-    3. Handle cross-cutting concerns (MLflow, saving/loading, config)
+    Defines the minimal interface that all classifiers must implement.
     """
 
     def __init__(
@@ -16,9 +19,8 @@ class BaseClassifier(ABC):
         name: str,
         random_state: int = 42,
         test_size: float = 0.3,
-        mlflow_tracking_uri: str = None,
-        mlflow_experiment_name: str = None,
-        config_path: str = None,
+        mlflow_tracking_uri: Optional[str] = None,
+        mlflow_experiment_name: Optional[str] = None,
     ):
         """
         Initialize the classifier.
@@ -27,72 +29,61 @@ class BaseClassifier(ABC):
             name (str): Name of the classifier
             random_state (int): Random state for reproducibility
             test_size (float): Fraction of data to use for testing
-            mlflow_tracking_uri (str): MLflow tracking URI
-            mlflow_experiment_name (str): MLflow experiment name
-            config_path (str): Path to config file
+            mlflow_tracking_uri (str, optional): MLflow tracking URI
+            mlflow_experiment_name (str, optional): MLflow experiment name
         """
         self.name = name
         self.random_state = random_state
         self.test_size = test_size
         self.mlflow_tracking_uri = mlflow_tracking_uri
         self.mlflow_experiment_name = mlflow_experiment_name
-        self.config_path = config_path
-        self.config = None
+
+        # Data
         self.X_train = None
         self.y_train = None
         self.X_test = None
         self.y_test = None
+
+        # Model
         self.model = None
-        self.model_type = None
-        self.levels = None
-        self.level_encoders = None
-        self.hierarchy_map = None
-        self.feature_names = None
-        self.metadata = None
 
     @abstractmethod
     def build_model(self):
-        """
-        Build the model.
-        """
+        """Build the model."""
         pass
 
     @abstractmethod
     def train(self):
-        """
-        Train the model.
-        """
+        """Train the model."""
         pass
 
     @abstractmethod
     def evaluate(self):
-        """
-        Evaluate the model.
-        """
+        """Evaluate the model."""
         pass
 
     @abstractmethod
-    def predict(self, X):
+    def predict(self, X: pd.DataFrame):
         """
         Make predictions on new data.
 
         Args:
-            X (pd.DataFrame): Data to make predictions on
+            X (pd.DataFrame): Features to predict on
 
         Returns:
-            pd.DataFrame: Predictions
+            Predictions
         """
         pass
 
     @abstractmethod
-    def predict_proba(self, X):
+    def predict_proba(self, X: pd.DataFrame):
         """
-        Make predictions on new data.
+        Make probability predictions on new data.
 
         Args:
-            X (pd.DataFrame): Data to make predictions on
+            X (pd.DataFrame): Features to predict on
 
         Returns:
-            pd.DataFrame: Predictions
+            Prediction probabilities
         """
         pass
