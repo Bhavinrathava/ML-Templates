@@ -118,6 +118,19 @@ class MLflowManager:
         except Exception as e:
             raise RuntimeError(f"Failed to log metrics: {e}")
 
+    def set_tags(self, tags: Dict[str, str]) -> None:
+        """
+        Set tags for the current MLflow run.
+
+        Args:
+            tags (dict): Dictionary of tags to set (key-value pairs)
+        """
+        try:
+            for key, value in tags.items():
+                mlflow.set_tag(key, value)
+        except Exception as e:
+            raise RuntimeError(f"Failed to set tags: {e}")
+
     def log_model(
         self,
         model: Any,
